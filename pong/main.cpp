@@ -1,7 +1,68 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <iostream>
 #include <map>
 #include <memory>
+#include <string>
+
+class Vec2 {
+public:
+  float x = 0;
+  float y = 0;
+
+  Vec2() {}
+
+  Vec2(float xin, float yin) : x(xin), y(yin) {}
+
+  Vec2 operator+(const Vec2 &rh) const { return Vec2(x + rh.x, y + rh.y); }
+
+  Vec2 operator*(const float hr) const { return Vec2(x * hr, y * hr); }
+
+  // Chaining: By returning a reference to itself we can
+  // enable this method to be chained onto others
+  Vec2 &add(const Vec2 &v) {
+    x += v.x;
+    y += v.y;
+    return *this;
+  }
+
+  void multiply(const float v) {
+    x *= v;
+    y *= v;
+  }
+};
+
+class CTransform {
+public:
+  Vec2 pos = {0, 0};
+  Vec2 velocity = {0, 0};
+
+  CTransform() {}
+  CTransform(const Vec2 &p, const Vec2 &v)
+    : pos(p), velocity(v) {}
+};
+
+class CName {
+public:
+  std::string name;
+
+  CName() {}
+  CName(std::string name) 
+    : name(name) {}
+};
+
+class CShape {
+public:
+  sf::RectangleShape shape;
+
+  CShape() {}
+};
+
+class CBBox {
+public:
+
+  CBBox() {}
+};
 
 class Entity {
   std::string m_tag;
@@ -9,6 +70,11 @@ class Entity {
   bool m_alive = true;
 
 public:
+  std::shared_ptr<CTransform> cTransform;
+  std::shared_ptr<CName>      cName;
+  std::shared_ptr<CShape>     cShape;
+  std::shared_ptr<CBBox>      cBBox; // Bounding box
+
   Entity() {}
   Entity(std::string tag, size_t id) {
     this->m_tag = tag;
@@ -64,32 +130,6 @@ public:
   EntityVec &getEntities(const std::string &tag);
 };
 
-class Vec2 {
-public:
-  float x = 0;
-  float y = 0;
-
-  Vec2() {}
-
-  Vec2(float xin, float yin) : x(xin), y(yin) {}
-
-  Vec2 operator+(const Vec2 &rh) const { return Vec2(x + rh.x, y + rh.y); }
-
-  Vec2 operator*(const float hr) const { return Vec2(x * hr, y * hr); }
-
-  // Chaining: By returning a reference to itself we can
-  // enable this method to be chained onto others
-  Vec2 &add(const Vec2 &v) {
-    x += v.x;
-    y += v.y;
-    return *this;
-  }
-
-  void multiply(const float v) {
-    x *= v;
-    y *= v;
-  }
-};
 
 int main() {
   int width = 800, height = 300, x = width / 2, y = height / 2, speed = 1;
